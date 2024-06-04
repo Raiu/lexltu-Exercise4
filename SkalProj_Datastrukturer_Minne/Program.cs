@@ -13,6 +13,7 @@ namespace SkalProj_Datastrukturer_Minne
 
             while (true)
             {
+                Console.Clear();
                 Console.WriteLine("Please navigate through the menu by inputting the number \n(1, 2, 3 ,4, 0) of your choice"
                     + "\n1. Examine a List"
                     + "\n2. Examine a Queue"
@@ -63,21 +64,93 @@ namespace SkalProj_Datastrukturer_Minne
         static void ExamineList()
         {
             /*
-             * Loop this method untill the user inputs something to exit to main menue.
-             * Create a switch statement with cases '+' and '-'
-             * '+': Add the rest of the input to the list (The user could write +Adam and "Adam" would be added to the list)
-             * '-': Remove the rest of the input from the list (The user could write -Adam and "Adam" would be removed from the list)
-             * In both cases, look at the count and capacity of the list
-             * As a default case, tell them to use only + or -
-             * Below you can see some inspirational code to begin working.
+            2) The list increase capacity once the final element in the array has been written to.
+
+            3) I observed that it will increase by 4 two times and then it doubled that to 8 for each increase.
+            So i assume its exponential growth.
+
+            4) Its expensive to resize the list, because it has to create a new array and copy the elements over
+            for each size increase.
+
+            5) No, a list will retain its size when elements are removed
+
+            6) When you know the how large of an array you need beforehand, it can be advantages to use a an array with
+            specific size so as to avoid re-allocating the array and unnecessary memory overhead.
             */
 
-            //List<string> theList = new List<string>();
-            //string input = Console.ReadLine();
-            //char nav = input[0];
-            //string value = input.substring(1);
+            var theList = new List<string>();
 
-            //switch(nav){...}
+            Console.Clear();
+
+            Console.WriteLine("\nList initalized");
+            Console.WriteLine($"Capacity: {theList.Capacity} Count: {theList.Count}\n");
+
+            var running = true;
+            while(running)
+            {
+                Console.WriteLine("\nPlease enter some input!");
+                var input = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    Console.WriteLine("Invalid input!");
+                    continue;
+                }
+
+                var capacityBefore = theList.Capacity;
+                var countBefore = theList.Count;
+
+                char op = input[0];
+                string value = input.Substring(1);
+
+                switch (op)
+                {
+                    case '+':
+                        theList.Add(value);
+                        break;
+                    case '-':
+                        theList.Remove(value);
+                        break;
+                    case '0':
+                    case 'e':
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please use only \"+\" or \"-\" as an operator");
+                        Console.WriteLine("If you want to return to the main menu, please enter \"0\"");
+                        continue;
+                }
+
+                if (!running) break;
+
+                var capacityAfter = theList.Capacity;
+                var countAfter = theList.Count;
+
+                Console.Write("\n");
+
+                if (GetChangeAmount(capacityBefore, capacityAfter, out int capacityChange))
+                    Console.WriteLine($"Capacity {(capacityChange > 0 ? "decreased" : "increased")} by {(capacityChange < 0 ? -1 : 1) * capacityChange}");
+                else 
+                    Console.WriteLine("Capacity did not change");
+
+                if (GetChangeAmount(countBefore, countAfter, out int countChange))
+                    Console.WriteLine($"Count {(countChange > 0 ? "decreased" : "increased")} by {(countChange < 0 ? -1 : 1) * countChange}");
+                else
+                    Console.WriteLine("Count did not change");
+
+
+            }
+
+            Console.WriteLine("\n\nFinal list size");
+            Console.WriteLine($"Capacity: {theList.Capacity} Count: {theList.Count}");
+
+            Console.WriteLine("\nPress any key to return to main menu...");
+            Console.ReadKey();
+        }
+
+        private static bool GetChangeAmount(int value1, int value2, out int change)
+        {
+            change = value1 - value2;
+            return change != 0;
         }
 
         /// <summary>
