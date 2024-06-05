@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 
 namespace SkalProj_Datastrukturer_Minne
 {
@@ -127,12 +128,12 @@ namespace SkalProj_Datastrukturer_Minne
 
                 Console.Write("\n");
 
-                if (GetChangeAmount(capacityBefore, capacityAfter, out int capacityChange))
+                if (CheckChange(capacityBefore, capacityAfter, out int capacityChange))
                     Console.WriteLine($"Capacity {(capacityChange > 0 ? "decreased" : "increased")} by {(capacityChange < 0 ? -1 : 1) * capacityChange}");
                 else 
                     Console.WriteLine("Capacity did not change");
 
-                if (GetChangeAmount(countBefore, countAfter, out int countChange))
+                if (CheckChange(countBefore, countAfter, out int countChange))
                     Console.WriteLine($"Count {(countChange > 0 ? "decreased" : "increased")} by {(countChange < 0 ? -1 : 1) * countChange}");
                 else
                     Console.WriteLine("Count did not change");
@@ -147,22 +148,75 @@ namespace SkalProj_Datastrukturer_Minne
             Console.ReadKey();
         }
 
-        private static bool GetChangeAmount(int value1, int value2, out int change)
-        {
-            change = value1 - value2;
-            return change != 0;
-        }
+        
 
         /// <summary>
         /// Examines the datastructure Queue
         /// </summary>
         static void ExamineQueue()
         {
-            /*
-             * Loop this method untill the user inputs something to exit to main menue.
-             * Create a switch with cases to enqueue items or dequeue items
-             * Make sure to look at the queue after Enqueueing and Dequeueing to see how it behaves
-            */
+            var lineQueue = new Queue<string>();
+
+            Console.Clear();
+
+            Console.WriteLine("\nQueue initalized");
+
+            var running = true;
+            while(running)
+            {
+                Console.WriteLine("\nPlease enter some input!");
+                var input = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    Console.WriteLine("Invalid input!");
+                    continue;
+                }
+
+                char op = input[0];
+                string value = input.Substring(1);
+
+                switch (op)
+                {
+                    case '+':
+                        lineQueue.Enqueue(value);
+                        Console.WriteLine($"Customer {value} has been added to the line");
+                        break;
+                    case '-':
+                        Console.WriteLine($"Customer {lineQueue.Dequeue()} has been handled");
+                        break;
+                    case '0':
+                    case 'e':
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please use only \"+\" or \"-\" as an operator");
+                        Console.WriteLine("If you want to return to the main menu, please enter \"0\"");
+                        continue;
+                }
+
+                if (!running) break;
+
+                Console.WriteLine($"Queue size: {lineQueue.Count}");
+
+                if (lineQueue.Count > 0) Console.WriteLine($"Next customer in line: {lineQueue.Peek()}");
+            }
+
+            if (lineQueue.Count > 0)
+            {
+                Console.WriteLine("\nStore to forgot to handle these customers:");
+
+                while (lineQueue.Count > 0)
+                {
+                    Console.WriteLine(lineQueue.Dequeue());
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nNo customers waiting in line");
+            }
+
+            Console.WriteLine("\nPress any key to return to main menu...");
+            Console.ReadKey();
         }
 
         /// <summary>
@@ -185,6 +239,12 @@ namespace SkalProj_Datastrukturer_Minne
              * Example of incorrect: (()]), [), {[()}],  List<int> list = new List<int>() { 1, 2, 3, 4 );
              */
 
+        }
+
+        private static bool CheckChange(int value1, int value2, out int change)
+        {
+            change = value1 - value2;
+            return change != 0;
         }
 
     }
