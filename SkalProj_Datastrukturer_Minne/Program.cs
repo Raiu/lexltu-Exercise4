@@ -76,7 +76,7 @@ namespace SkalProj_Datastrukturer_Minne
             5) No, a list will retain its size when elements are removed
 
             6) When you know the how large of an array you need beforehand, it can be advantages to use a an array with
-            specific size so as to avoid re-allocating the array and unnecessary memory overhead.
+            specific size so as to avoid re-allocating the array and unnecessary process and memory overhead.
             */
 
             var theList = new List<string>();
@@ -225,10 +225,73 @@ namespace SkalProj_Datastrukturer_Minne
         static void ExamineStack()
         {
             /*
-             * Loop this method until the user inputs something to exit to main menue.
-             * Create a switch with cases to push or pop items
-             * Make sure to look at the stack after pushing and and poping to see how it behaves
+                Stack is not a great datastructure for a customer queue.
+                Since the last customer to join the line is the first to be attended too.
+                Customers that join first will have to wait indefinitely for their turn.
             */
+
+            var stringStack = new Stack<string>();
+
+            Console.Clear();
+
+            Console.WriteLine("\nStack initalized");
+
+            var running = true;
+            while(running)
+            {
+                Console.WriteLine("\nPlease enter some input!");
+                var input = Console.ReadLine();
+                if (string.IsNullOrWhiteSpace(input))
+                {
+                    Console.WriteLine("Invalid input!");
+                    continue;
+                }
+
+                char op = input[0];
+                string value = input.Substring(1);
+
+                switch (op)
+                {
+                    case '+':
+                        stringStack.Push(value);
+                        Console.WriteLine($"Customer {value} has been added to the line");
+                        break;
+                    case '-':
+                        Console.WriteLine($"Customer {stringStack.Pop()} has been handled");
+                        break;
+                    case '0':
+                    case 'e':
+                        running = false;
+                        break;
+                    default:
+                        Console.WriteLine("Please use only \"+\" or \"-\" as an operator");
+                        Console.WriteLine("If you want to return to the main menu, please enter \"0\"");
+                        continue;
+                }
+
+                if (!running) break;
+
+                Console.WriteLine($"Queue size: {stringStack.Count}");
+
+                if (stringStack.Count > 0) Console.WriteLine($"Next customer in line: {stringStack.Peek()}");
+            }
+
+            if (stringStack.Count > 0)
+            {
+                Console.WriteLine("\nStore to forgot to handle these customers:");
+
+                while (stringStack.Count > 0)
+                {
+                    Console.WriteLine(stringStack.Pop());
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nNo customers waiting in line");
+            }
+
+            Console.WriteLine("\nPress any key to return to main menu...");
+            Console.ReadKey();
         }
 
         static void CheckParanthesis()
