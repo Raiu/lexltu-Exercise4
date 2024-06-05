@@ -302,6 +302,33 @@ namespace SkalProj_Datastrukturer_Minne
              * Example of incorrect: (()]), [), {[()}],  List<int> list = new List<int>() { 1, 2, 3, 4 );
              */
 
+            Console.Clear();
+
+            string? inputString;
+            do {
+                Console.WriteLine("\nPlease enter a string containing paranthesis!");
+                inputString = Console.ReadLine();
+            } while (string.IsNullOrWhiteSpace(inputString));
+
+            var parStack = new Stack<char>();
+            foreach (char character in inputString)
+            {
+                if (character == '(')
+                {
+                    parStack.Push(character);
+                }
+                else if (character == ')' && (!parStack.TryPop(out _)))
+                {
+                    Console.WriteLine("Your string has an invalid structure");
+                    Console.WriteLine("\nPress any key to return to main menu...");
+                    Console.ReadKey();
+                    return;
+                }
+            }
+
+            Console.WriteLine(parStack.Count == 0 ? $"{inputString} is a valid string" : "Your string has an invalid structure");
+            Console.WriteLine("\nPress any key to return to main menu...");
+            Console.ReadKey();
         }
 
         private static bool CheckChange(int value1, int value2, out int change)
