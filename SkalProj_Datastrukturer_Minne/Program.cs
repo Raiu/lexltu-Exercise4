@@ -310,23 +310,59 @@ namespace SkalProj_Datastrukturer_Minne
                 inputString = Console.ReadLine();
             } while (string.IsNullOrWhiteSpace(inputString));
 
-            var parStack = new Stack<char>();
-            foreach (char character in inputString)
+            var brackets = new Dictionary<char, char>() {
+                {'(', ')'},
+                {'{', '}'},
+                {'[', ']'}
+            };
+            var openingBrackets = new Stack<(char bracket, int index)>();
+            var errors = new List<string>();
+
+            for (int i = 0; i < inputString.Length; i++)
             {
-                if (character == '(')
+                var c = inputString[i];
+
+                if (brackets.ContainsKey(c))
                 {
-                    parStack.Push(character);
+                    openingBrackets.Push((c, i));
                 }
-                else if (character == ')' && (!parStack.TryPop(out _)))
+                else if (brackets.ContainsValue(c))
                 {
-                    Console.WriteLine("Your string has an invalid structure");
-                    Console.WriteLine("\nPress any key to return to main menu...");
-                    Console.ReadKey();
-                    return;
+                    if (!openingBrackets.TryPeek(out var top) || brackets[top.bracket] != c)
+                    {
+                        string error;
+                        if (top != default)
+                            error = $"Expected '{brackets[top.bracket]}', found '{c}'.";
+                        else
+                            error = $"No matching opening bracket for '{c}'.";
+                        errors.Add($"Error at position {i}: {error}");
+                    }
+                    else
+                    {
+                        openingBrackets.Pop();
+                    }
                 }
             }
 
-            Console.WriteLine(parStack.Count == 0 ? $"{inputString} is a valid string" : "Your string has an invalid structure");
+            while (openingBrackets.Count > 0)
+            {
+                var (bracket, index) = openingBrackets.Pop();
+                errors.Add($"Error at position {index}: '{bracket}' is not closed.");
+            }
+
+            if (errors.Count > 0)
+            {
+                Console.WriteLine("\nYour string has an invalid structure");
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error);
+                }
+            }
+            else
+            {
+                Console.WriteLine("\nYour string has a valid structure");
+            }
+
             Console.WriteLine("\nPress any key to return to main menu...");
             Console.ReadKey();
         }
